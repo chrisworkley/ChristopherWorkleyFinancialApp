@@ -1,3 +1,5 @@
+"use client";
+
 // 🧪 TEMP MOCK FUNCTIONS (replace Appwrite calls)
 const getBank = async ({ documentId }: { documentId: string }) => {
   return {
@@ -14,8 +16,6 @@ const getBankByAccountId = async ({ accountId }: { accountId: string }) => {
     fundingSourceUrl: 'https://mock.dwolla.com/receiver-funding-source',
   };
 };
-
-"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
