@@ -5,8 +5,6 @@ import React from 'react'
 import Copy from './Copy'
 
 const BankCard = ({ account, userName, showBalance = true }: CreditCardProps) => {
-
-  console.log(account);
   return (
     <div className="flex flex-col">
       <Link href={`/transaction-history/?id=${account.appwriteItemId}`} className="bank-card">
@@ -26,7 +24,7 @@ const BankCard = ({ account, userName, showBalance = true }: CreditCardProps) =>
                 {userName}
               </h1>
               <h2 className="text-12 font-semibold text-white">
-              ●● / ●●
+                ●● / ●●
               </h2>
             </div>
             <p className="text-14 font-semibold tracking-[1.1px] text-white">
@@ -60,7 +58,7 @@ const BankCard = ({ account, userName, showBalance = true }: CreditCardProps) =>
         />
       </Link>
 
-      {showBalance && <Copy title={account?.sharaebleId} />}
+     {showBalance && <Copy title={account?.id} />}
     </div>
   )
 }

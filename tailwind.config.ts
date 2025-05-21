@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-const config = {
+const config: Config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -9,7 +9,6 @@ const config = {
     "./src/**/*.{ts,tsx}",
     "./constants/**/*.{ts,tsx}",
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -45,12 +44,17 @@ const config = {
           900: "#851651",
         },
         blue: {
-          25: "#F5FAFF",
-          100: "#D1E9FF",
-          500: "#2E90FA",
-          600: "#1570EF",
-          700: "#175CD3",
-          900: "#194185",
+          25: "#F5FAFF",            // 👈 This must exist!
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
         },
         sky: {
           1: "#F3F9FF",
@@ -104,6 +108,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
 
 export default config;

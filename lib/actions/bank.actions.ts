@@ -13,119 +13,97 @@ import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
 
 import { getTransactionsByBankId } from "./transaction.actions";
-import { getBanks, getBank } from "./user.actions";
 
 // Get multiple bank accounts
-export const getAccounts = async ({ userId }: getAccountsProps) => {
-  try {
-    // get banks from db
-    const banks = await getBanks({ userId });
-
-    const accounts = await Promise.all(
-      banks?.map(async (bank: Bank) => {
-        // get each account info from plaid
-        const accountsResponse = await plaidClient.accountsGet({
-          access_token: bank.accessToken,
-        });
-        const accountData = accountsResponse.data.accounts[0];
-
-        // get institution info from plaid
-        const institution = await getInstitution({
-          institutionId: accountsResponse.data.item.institution_id!,
-        });
-
-        const account = {
-          id: accountData.account_id,
-          availableBalance: accountData.balances.available!,
-          currentBalance: accountData.balances.current!,
-          institutionId: institution.institution_id,
-          name: accountData.name,
-          officialName: accountData.official_name,
-          mask: accountData.mask!,
-          type: accountData.type as string,
-          subtype: accountData.subtype! as string,
-          appwriteItemId: bank.$id,
-          sharaebleId: bank.shareableId,
-        };
-
-        return account;
-      })
-    );
-
-    const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
-      return total + account.currentBalance;
-    }, 0);
-
-    return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
-  }
+export const getAccounts = async ({ userId }: { userId: string }) => {
+  return {
+    data: [
+      {
+        $id: "bank-001",
+        id: "acc-001",
+        accountId: "acc-001",
+        name: "Mock Checking",
+        currentBalance: 3285.22,
+        availableBalance: 3000,
+        institutionId: "ins-123",
+        type: "checking",
+        subtype: "checking",
+        appwriteItemId: "mock-item-001",
+        officialName: "Mock Bank",
+        mask: "1234",
+        shareableId: "mock-share-id",
+        accessToken: "mock-token",
+        fundingSourceUrl: "https://api.mock.dwolla.com/funding-source/1",
+        bankId: "bank-id-001",
+        userId: "mock-user-id"
+      },
+      {
+        $id: "bank-002",
+        id: "acc-002",
+        accountId: "acc-002",
+        name: "Mock Savings",
+        currentBalance: 14420.89,
+        availableBalance: 14420.89,
+        institutionId: "ins-456",
+        type: "savings",
+        subtype: "savings",
+        appwriteItemId: "mock-item-002",
+        officialName: "Mock Bank",
+        mask: "5678",
+        shareableId: "mock-share-id-2",
+        accessToken: "mock-token-2",
+        fundingSourceUrl: "https://api.mock.dwolla.com/funding-source/2",
+        bankId: "bank-id-002",
+        userId: "mock-user-id"
+      }
+    ],
+    totalBanks: 2,
+    totalCurrentBalance: 17706.11
+  };
 };
 
 // Get one bank account
-export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
-  try {
-    // get bank from db
-    const bank = await getBank({ documentId: appwriteItemId });
-
-    // get account info from plaid
-    const accountsResponse = await plaidClient.accountsGet({
-      access_token: bank.accessToken,
-    });
-    const accountData = accountsResponse.data.accounts[0];
-
-    // get transfer transactions from appwrite
-    const transferTransactionsData = await getTransactionsByBankId({
-      bankId: bank.$id,
-    });
-
-    const transferTransactions = transferTransactionsData.documents.map(
-      (transferData: Transaction) => ({
-        id: transferData.$id,
-        name: transferData.name!,
-        amount: transferData.amount!,
-        date: transferData.$createdAt,
-        paymentChannel: transferData.channel,
-        category: transferData.category,
-        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-      })
-    );
-
-    // get institution info from plaid
-    const institution = await getInstitution({
-      institutionId: accountsResponse.data.item.institution_id!,
-    });
-
-    const transactions = await getTransactions({
-      accessToken: bank?.accessToken,
-    });
-
-    const account = {
-      id: accountData.account_id,
-      availableBalance: accountData.balances.available!,
-      currentBalance: accountData.balances.current!,
-      institutionId: institution.institution_id,
-      name: accountData.name,
-      officialName: accountData.official_name,
-      mask: accountData.mask!,
-      type: accountData.type as string,
-      subtype: accountData.subtype! as string,
-      appwriteItemId: bank.$id,
-    };
-
-    // sort transactions by date such that the most recent transaction is first
-      const allTransactions = [...transactions, ...transferTransactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    return parseStringify({
-      data: account,
-      transactions: allTransactions,
-    });
-  } catch (error) {
-    console.error("An error occurred while getting the account:", error);
-  }
+export const getAccount = async ({ appwriteItemId }: { appwriteItemId: string }) => {
+  return {
+    data: {
+      $id: "txn-acc-001",
+      id: "acc-001",
+      name: "Mock Checking",
+      officialName: "Mock Checking Account",
+      currentBalance: 3285.22,
+      availableBalance: 3000,
+      type: "checking",
+      subtype: "checking",
+      appwriteItemId: appwriteItemId,
+      institutionId: "mock-inst",
+      mask: "1234",
+      shareableId: "mock-share-id",
+      accessToken: "mock-access-token",
+      bankId: "mock-bank-id",
+      fundingSourceUrl: "https://api.mock.dwolla.com/funding-source/1",
+      userId: "mock-user-id"
+    },
+    transactions: [
+      {
+        $id: "txn-001",
+        id: "txn-001",
+        name: "Starbucks",
+        amount: 6.75,
+        category: "Food & Drink",
+        date: "2025-05-15",
+        type: "debit",
+        paymentChannel: "in store",
+        accountId: "acc-001",
+        pending: false,
+        image: "",
+        senderBankId: "bank-001",
+        receiverBankId: "bank-002",
+        email: "chris@example.com",
+        $createdAt: "2025-05-15T00:00:00Z",
+        channel: "in store"
+      }
+    ]
+  };
 };
 
 // Get bank info

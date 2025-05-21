@@ -2,11 +2,10 @@
 
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
+import { plaidClient } from '@/lib/plaid';
 import { cookies } from "next/headers";
 import { encryptId, extractCustomerIdFromUrl, parseStringify } from "../utils";
 import { CountryCode, ProcessorTokenCreateRequest, ProcessorTokenCreateRequestProcessorEnum, Products } from "plaid";
-
-import { plaidClient } from '@/lib/plaid';
 import { revalidatePath } from "next/cache";
 import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
 
@@ -106,30 +105,24 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
 }
 
 export async function getLoggedInUser() {
-  try {
-    const { account } = await createSessionClient();
-    const result = await account.get();
-
-    const user = await getUserInfo({ userId: result.$id})
-
-    return parseStringify(user);
-  } catch (error) {
-    console.log(error)
-    return null;
-  }
+  return {
+    $id: "mock-user-id",
+    userId: "mock-user-id",
+    name: "Chris Workley",
+    email: "chris@example.com",
+    firstName: "Chris",
+    lastName: "Workley",
+    address1: "123 Main St",
+    city: "Tempe",
+    state: "AZ",
+    postalCode: "85281",
+    dateOfBirth: "2000-01-01",
+    ssn: "1234",
+    dwollaCustomerId: "mock-dwolla-id",
+    dwollaCustomerUrl: "https://api.mock.dwolla.com/customers/mock"
+  };
 }
 
-export const logoutAccount = async () => {
-  try {
-    const { account } = await createSessionClient();
-
-    cookies().delete('appwrite-session');
-
-    await account.deleteSession('current');
-  } catch (error) {
-    return null;
-  }
-}
 
 export const createLinkToken = async (user: User) => {
   try {

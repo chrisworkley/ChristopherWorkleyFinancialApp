@@ -369,20 +369,6 @@ export const signIn = async ({ email, password }: signInProps) => {
   }
 };
 
-export const getLoggedInUser = async () => {
-  try {
-    const { account } = await createSessionClient();
-    const result = await account.get();
-
-    const user = await getUserInfo({ userId: result.$id });
-
-    return parseStringify(user);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-
 // CREATE PLAID LINK TOKEN
 export const createLinkToken = async (user: User) => {
   try {

@@ -1,3 +1,20 @@
+// 🧪 TEMP MOCK FUNCTIONS (replace Appwrite calls)
+const getBank = async ({ documentId }: { documentId: string }) => {
+  return {
+    $id: 'mock-sender-bank-id',
+    userId: { $id: 'mock-sender-user-id' },
+    fundingSourceUrl: 'https://mock.dwolla.com/sender-funding-source',
+  };
+};
+
+const getBankByAccountId = async ({ accountId }: { accountId: string }) => {
+  return {
+    $id: 'mock-receiver-bank-id',
+    userId: { $id: 'mock-receiver-user-id' },
+    fundingSourceUrl: 'https://mock.dwolla.com/receiver-funding-source',
+  };
+};
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +26,6 @@ import * as z from "zod";
 
 import { createTransfer } from "@/lib/actions/dwolla.actions";
 import { createTransaction } from "@/lib/actions/transaction.actions";
-import { getBank, getBankByAccountId } from "@/lib/actions/user.actions";
 import { decryptId } from "@/lib/utils";
 
 import { BankDropdown } from "./BankDropdown";
